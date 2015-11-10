@@ -13,7 +13,7 @@
 </form>
 {{/username}}
 <br><br>
-<h2>{{^username}}  Messages by {{username}}!  {{/username}}</h2>
+<h2>{{^username}}  Messages by {{.}}!  {{/username}}</h2>
 
 <br>
 
@@ -22,13 +22,14 @@
     <button type="submit">Submit</button>
 </form>
 <br><br>
+{{#username}}
 {{#message}}
-
 <form action="delete-message" method="post">
+    <input type="hidden" value="{{id}}" name="id"/>
     {{id}}      {{text}}
     <button type="submit">Delete</button>
 </form>
-
 {{/message}}
+{{/username}}
 </body>
 </html>

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by landonkail on 11/9/15.
@@ -19,7 +20,7 @@ import java.util.List;
 @Controller
 public class MessageController {
 
-    ArrayList<Message> list = new ArrayList<>();
+    List<Message> list = new ArrayList<>();
 
     // Home
     @RequestMapping("/")
@@ -54,13 +55,18 @@ public class MessageController {
 
     // DELETE MESSAGE
     @RequestMapping("/delete-message")
-    public String deleteMessage (HttpServletRequest request, int id) {
+    public String deleteMessage (Integer id) {
         list.remove(id -1);
         int idNum = 1;
         for (Message m : list) {
             m.id = idNum;
             idNum++;
         }
+
+        /*list = list.stream()
+                .filter(msg -> msg.id == id)
+                .collect(Collectors.toList());
+        */
         return "redirect:/";
     }
 }
