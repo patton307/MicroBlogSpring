@@ -1,5 +1,6 @@
 package com.theironyard;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,27 +20,26 @@ import java.util.stream.Collectors;
 
 @Controller
 public class MessageController {
-
-    List<Message> list = new ArrayList<>();
+    @Autowired
+    MessageRepository messages;
 
     // Home
     @RequestMapping("/")
     public String home(Model model, HttpServletRequest request) {
-        try {
-            HttpSession session = request.getSession();
-            String username = (String) session.getAttribute("username");
-            model.addAttribute("username", username);
-            model.addAttribute("message", list);
-        } catch (Exception e) {}
+        HttpSession session = request.getSession();
+        String username = (String) session.getAttribute("username");
+        model.addAttribute("username", username);
+        model.addAttribute("message", messages.findAll());
+
         return "home";
     }
 
-
-    // NO USER - INITIAL LOGIN
+    // NO USER - CREATE USER
     @RequestMapping("/login")
-    public String createUser(HttpServletRequest request, String username) {
+    public String createUser(String username, HttpServletRequest request) {
         HttpSession session = request.getSession();
         session.setAttribute("username", username);
+
         return "redirect:/";
     }
 
@@ -47,26 +47,35 @@ public class MessageController {
     // INSERT MESSAGE
     @RequestMapping("/create-message")
     public String createMessage (String text) {
-        int id = list.size() + 1;
-        Message m = new Message(id, text);
-        list.add(m);
+        Message m = new Message();
+        m.text = text;
+
+        messages.save(m);
         return "redirect:/";
     }
 
     // DELETE MESSAGE
     @RequestMapping("/delete-message")
     public String deleteMessage (Integer id) {
-        list.remove(id -1);
-        int idNum = 1;
-        for (Message m : list) {
-            m.id = idNum;
-            idNum++;
-        }
+        Message m = messages.findOne(id);
+        m.id = id;
 
-        /*list = list.stream()
-                .filter(msg -> msg.id == id)
-                .collect(Collectors.toList());
-        */
+        messages.delete(id);
+
         return "redirect:/";
     }
+
+    // EDIT MESSAGE
+    @RequestMapping("edit-message")
+    public String editMessage(Integer id, String text) {
+
+        Message m = messages.findOne(id);
+
+        m.id = id;
+        m.text = text;
+        messages.save(m);
+        return "redirect:/";
+    }
+
+
 }
