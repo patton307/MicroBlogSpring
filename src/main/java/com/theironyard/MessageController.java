@@ -57,8 +57,6 @@ public class MessageController {
     // DELETE MESSAGE
     @RequestMapping("/delete-message")
     public String deleteMessage (Integer id) {
-        Message m = messages.findOne(id);
-        m.id = id;
 
         messages.delete(id);
 
@@ -66,13 +64,21 @@ public class MessageController {
     }
 
     // EDIT MESSAGE
-    @RequestMapping("edit-message")
-    public String editMessage(Integer id, String text) {
+    @RequestMapping("/edit")
+    public String edit(Integer id, Model model) {
 
         Message m = messages.findOne(id);
 
-        m.id = id;
-        m.text = text;
+        model.addAttribute("message", m);
+        return "edit";
+    }
+
+    @RequestMapping("/edit-message")
+    public String editMessage(Integer id, String text) {
+        Message m = messages.findOne(id);
+        if (m != null) {
+            m.text = text;
+        }
         messages.save(m);
         return "redirect:/";
     }

@@ -34,11 +34,7 @@
     <button type="submit">Delete</button>
 </form>
 
-<form action="edit-message" method="post">
-    <input type="hidden" value="{{id}}" name="editid"/>
-    <input type="text" placeholder="Edit your message" name="edittext"/>
-    <button type="submit">Edit</button>
-</form>
+<a href="edit?id={{id}}">Edit</a>
 {{/message}}
 
 {{/username}}
